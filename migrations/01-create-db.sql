@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS accounts (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    password VARCHAR(255) NOT NULL,
+    twofa_secret VARCHAR(255),
+    twofa_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (email)
+);
+CREATE TABLE IF NOT EXISTS messages (
+    message_sid VARCHAR(36) PRIMARY KEY,
+    account_id VARCHAR(36) NOT NULL,
+    content VARCHAR(255) NOT NULL,
+    from_number VARCHAR(255) NOT NULL,
+    to_number VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TRIGGER IF NOT EXISTS accounts_updated_at
+AFTER
+UPDATE ON accounts BEGIN
+UPDATE accounts
+SET updated_at = CURRENT_TIMESTAMP
+WHERE id = NEW.id;
+END;
